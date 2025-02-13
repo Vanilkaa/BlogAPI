@@ -32,10 +32,10 @@ router.get('/:postId', async (req, res) => {
     const post = await prisma.post.findUnique({
         where: {
             id: +req.params.postId,
+            published: true,
         }
     })
-    if(post.published) res.json(post);
-    else res.json(null);
+    res.json(post);
 })
 
 router.get('/:postId/comments', async (req, res) => {
