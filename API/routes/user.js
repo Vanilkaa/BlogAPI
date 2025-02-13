@@ -1,7 +1,6 @@
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
 const router = require('express').Router();
-const passport = require('passport');
 const utils = require('../lib/utils');
 
 router.post('/login', async function(req, res){

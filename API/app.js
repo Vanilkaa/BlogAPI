@@ -12,13 +12,9 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
 const userRouter = require('./routes/user');
-
-/*app.get('/protected', passport.authenticate('jwt', {session: false}),
-    function(req, res) {
-        res.send(req.user);
-    })
-*/
+const postsRouter = require('./routes/posts');
 
 app.use('/', userRouter);
+app.use('/posts', postsRouter);
 
 app.listen(port, console.log(`Server running on port ${port}`));
