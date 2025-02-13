@@ -4,7 +4,11 @@ const router = require('express').Router();
 const passport = require('passport');
 
 router.get('/', async (req, res) => {
-    const posts = await prisma.post.findMany();
+    const posts = await prisma.post.findMany({
+        where: {
+            published: true,
+        }
+    });
     res.json(JSON.stringify(posts));
 })
 
@@ -30,11 +34,12 @@ router.get('/:postId', async (req, res) => {
             id: +req.params.postId,
         }
     })
-    res.json(post);
+    if(post.published) res.json(post);
+    else res.json(null);
 })
 
 router.get('/:postId/comments', async (req, res) => {
-    const comments = prisma.comments.findMany({
+    const comments = prisma.comment.findMany({
         where: {
             postId: +req.params.postId,
         }
