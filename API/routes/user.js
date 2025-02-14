@@ -2,6 +2,7 @@ const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
 const router = require('express').Router();
 const utils = require('../lib/utils');
+const passport = require('passport');
 
 router.post('/login', async function(req, res){
     const user = await prisma.user.findUnique({
@@ -49,5 +50,18 @@ router.post('/register', async function(req, res, next){
         res.status(200).json({ success: true, token: tokenObject.token, expiresIn: tokenObject.expires });
     } else res.json({ success: false });
 });
+
+router.get('/user', passport.authenticate('jwt', { session: false }), async (req, res) => {
+    const user = await prisma.user.findUnique({
+        where: {
+            id: req.user.id,
+        },
+        omit: {
+            password: true,
+            salt: true,
+        }
+    })
+    res.json(JSON.stringify(user));
+})
 
 module.exports = router;

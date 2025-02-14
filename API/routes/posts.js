@@ -39,11 +39,30 @@ router.get('/:postId', async (req, res) => {
 })
 
 router.get('/:postId/comments', async (req, res) => {
-    const comments = prisma.comment.findMany({
+    const comments = await prisma.comment.findMany({
         where: {
+            postId: +req.params.postId,
+            post: {
+                published: true,
+            }
+        }
+    })
+    res.json(JSON.stringify(comments))
+})
+
+router.post('/:postId/comments', passport.authenticate('jwt', { session: false }), async (req, res) => {
+    const comment = await prisma.comment.create({
+        data: {
+            content: req.body.content,
+            authorId: req.user.id,
             postId: +req.params.postId,
         }
     })
+    if (comment) {
+        res.sendStatus(200);
+    } else {
+        res.sendStatus(501);
+    }
 })
 
 module.exports = router;
